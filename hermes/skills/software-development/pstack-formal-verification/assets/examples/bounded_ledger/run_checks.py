@@ -6,6 +6,7 @@ import itertools
 import json
 from pathlib import Path
 import platform
+import re
 import tempfile
 
 BOUNDS = {'max_length': 4, 'capacity': 3, 'alphabet_size': 4}
@@ -29,7 +30,20 @@ def explore(path):
                     return False, count, list(sequence)
     return True, count, []
 
+def revisions(output):
+    # Covered-code revisions are an explicit input: the receipt already present in --output.
+    # They are never read from git HEAD, so reruns cannot drift with later commits.
+    try:
+        previous = json.loads((output / 'receipt.json').read_text())
+        values = [previous['sync_commit'], previous['target_commit']]
+    except (OSError, ValueError, KeyError, TypeError):
+        raise SystemExit('run_checks needs an existing receipt.json in --output that names the source revision')
+    if not all(isinstance(v, str) and re.fullmatch('[0-9a-f]{40}', v) for v in values):
+        raise SystemExit('receipt.json revisions must be full 40-hex commits')
+    return values
+
 def run(output):
+    sync_commit, target_commit = revisions(output)
     source_root = Path(__file__).resolve().parent
     target = source_root / 'implementation/ledger.py'
     output.mkdir(parents=True, exist_ok=True)
@@ -47,8 +61,8 @@ def run(output):
               'before_sha256': before, 'after_sha256': after}}
     (output / 'result.json').write_text(json.dumps(result, indent=2) + '\n')
     receipt = {'schema_version': 1, 'status': 'pass' if passed else 'fail',
-        'sync_commit': '1ba91fc25c0977741dd0e267849e6234b037ed0a',
-        'target_commit': '1ba91fc25c0977741dd0e267849e6234b037ed0a',
+        'sync_commit': sync_commit,
+        'target_commit': target_commit,
         'bounds': BOUNDS, 'assumptions': ['Sequential operations only; integer inputs in finite alphabet'],
         'command': 'python3==' + platform.python_version() + ' run_checks.py',
         'code_root': 'implementation', 'protected_state': ['balance'],

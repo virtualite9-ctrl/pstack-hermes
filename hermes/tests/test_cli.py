@@ -7,7 +7,7 @@ class ActualCLI(Fixture):
             self.assertEqual(result.returncode, 0, result.stderr)
         actual = subprocess.run([sys.executable, str(self.aroot / 'app.py'), 'deposit', '2'], text=True, capture_output=True)
         self.assertEqual(actual.returncode, 0)
-        self.assertIn(actual.stdout.strip(), (self.aroot / 'drive.txt').read_text())
+        self.assertIn(actual.stdout.strip(), (self.aroot / 'drive.md').read_text())
 
     def test_formal_real_exhaustive_mutation_restore(self):
         target = self.broot / 'implementation/ledger.py'
@@ -36,7 +36,59 @@ class ActualCLI(Fixture):
             self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_checked_in_negative_cli_examples(self):
-        for path in sorted((A / 'examples').glob('fail-*.json')):
-            self.ev = load(path)
+        # Negative examples are derived from the shipped evidence (bundle file count is capped by native install ops).
+        base = copy.deepcopy(self.ev)
+        def stale(ev): ev['entries'][0]['artifacts'][0]['sha256'] = '0' * 64
+        def missing(ev): ev['entries'][0]['artifacts'][0]['path'] = 'missing.txt'
+        def uncovered(ev): ev['entries'] = []
+        def unreachable(ev): ev['entries'][0].update(live_coverage='unreachable', attempted_status='unreachable')
+        for change in (stale, missing, uncovered, unreachable):
+            self.ev = copy.deepcopy(base)
+            change(self.ev)
             result = self.cli(A, self.aroot, mode='maintain')
-            self.assertEqual(result.returncode, 1, (path.name, result.stdout, result.stderr))
+            self.assertEqual(result.returncode, 1, (change.__name__, result.stdout, result.stderr))
+
+    def test_rerun_keeps_fixed_revision_and_measured_version(self):
+        before = (self.receipt['sync_commit'], self.receipt['target_commit'])
+        git_bound(self.broot, FORMAL_EXAMPLE, self.receipt)
+        run = subprocess.run([sys.executable, str(self.broot / 'run_checks.py'), '--output', str(self.broot)], text=True, capture_output=True)
+        self.assertEqual(run.returncode, 0, run.stderr)
+        after = load(self.broot / 'receipt.json')
+        self.assertEqual(before, (after['sync_commit'], after['target_commit']))
+        git_bound(self.broot, FORMAL_EXAMPLE, after)
+        measured = subprocess.run([sys.executable, '-c', 'import platform;print(platform.python_version())'], text=True, capture_output=True).stdout.strip()
+        self.assertEqual(after['command'], 'python3==' + measured + ' run_checks.py')
+        self.assertEqual(self.cli(B, self.broot, receipt=after).returncode, 0)
+
+    def test_run_checks_requires_revision_input(self):
+        result_before = (self.broot / 'result.json').read_bytes()
+        for bad in ('missing', 'short'):
+            with self.subTest(bad=bad):
+                path = self.broot / 'receipt.json'
+                if bad == 'missing':
+                    path.unlink()
+                else:
+                    path.write_text(json.dumps(dict(self.receipt, sync_commit='abc')))
+                run = subprocess.run([sys.executable, str(self.broot / 'run_checks.py'), '--output', str(self.broot)], text=True, capture_output=True)
+                self.assertNotEqual(run.returncode, 0)
+                self.assertEqual((self.broot / 'result.json').read_bytes(), result_before)
+
+    def test_template_commands_run_as_documented(self):
+        for bundle in (A, B):
+            block = re.search(r'```sh\n(.*?)```', (bundle / 'templates/verification-skill.template.md').read_text(), re.S).group(1)
+            with tempfile.TemporaryDirectory() as temp:
+                cwd, ran = Path(temp), 0
+                for line in block.strip().splitlines():
+                    expected = int(re.search(r'# exit (\d)', line).group(1)) if '# exit ' in line else 0
+                    if line.startswith('cd '):
+                        cwd = cwd / line[3:].strip()
+                        continue
+                    line = line.replace('<skill_dir>', str(bundle))
+                    if line.startswith('python3 '):
+                        line = '"' + sys.executable + '" ' + line[len('python3 '):]
+                    run = subprocess.run(line, shell=True, cwd=cwd, text=True, capture_output=True)
+                    self.assertEqual(run.returncode, expected, (bundle.name, line, run.stdout, run.stderr))
+                    ran += 1
+                self.assertGreaterEqual(ran, 4)
+                if bundle == B:
+                    self.assertEqual(load(cwd / 'receipt.json')['status'], 'pass')

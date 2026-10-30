@@ -8,6 +8,7 @@ import re
 import shutil
 import subprocess
 import sys
+sys.dont_write_bytecode = True  # keep installable bundles free of generated .pyc
 import tempfile
 import unittest
 
@@ -26,6 +27,24 @@ def module(path, name):
 
 PA = module(A / 'scripts/project_verification.py', 'project')
 FB = module(B / 'scripts/formal_verification.py', 'formal')
+
+FORMAL_EXAMPLE = 'hermes/skills/software-development/pstack-formal-verification/assets/examples/bounded_ledger'
+
+def git_bound(root, prefix, receipt, repo=ROOT):
+    """Repo provenance only: git show bytes at each receipt commit must equal the covered file bytes."""
+    for key in ('sync_commit', 'target_commit'):
+        commit = receipt[key]
+        known = subprocess.run(['git', 'rev-parse', '--verify', '--quiet', commit + '^{commit}'], cwd=repo, capture_output=True)
+        if known.returncode != 0:
+            raise ValueError('unknown commit ' + str(commit))
+        for target in receipt['targets']:
+            name = prefix + '/' + target['path']
+            blob = subprocess.run(['git', 'show', commit + ':' + name], cwd=repo, capture_output=True)
+            if blob.returncode != 0:
+                raise ValueError('git cannot show ' + name + ' at ' + commit)
+            if blob.stdout != (root / target['path']).read_bytes():
+                raise ValueError('git bytes differ from covered file: ' + name)
+    return True
 
 def load(path):
     return json.loads(path.read_text())
@@ -49,8 +68,8 @@ class Fixture(unittest.TestCase):
         self.root = Path(self.temp.name)
         self.aroot = self.root / 'project'
         self.broot = self.root / 'formal'
-        shutil.copytree(A / 'examples', self.aroot)
-        shutil.copytree(B / 'examples/bounded_ledger', self.broot)
+        shutil.copytree(A / 'assets/examples', self.aroot)
+        shutil.copytree(B / 'assets/examples/bounded_ledger', self.broot)
         self.map = load(self.aroot / 'feature-map.json')
         self.ev = load(self.aroot / 'evidence.json')
         self.receipt = load(self.broot / 'receipt.json')

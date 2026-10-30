@@ -23,7 +23,7 @@ class Distribution(unittest.TestCase):
             links(bundle)
             body = (bundle / 'SKILL.md').read_text()
             self.assertIn('metadata:\n  hermes:\n    tags:', body)
-            self.assertLess(len(body.splitlines()), 30)
+            self.assertLess(len(body.splitlines()), 45)
             for link in re.findall(r'\]\(([^)]+)\)', body):
                 self.assertNotIn('://', link)
 
@@ -44,3 +44,41 @@ class Distribution(unittest.TestCase):
         actual = load(ROOT / 'hermes/MANIFEST.json')
         self.assertEqual(actual, tool.build(ROOT / 'hermes'))
         self.assertEqual(len(actual['bundles']), 2)
+
+
+class NativePackaging(unittest.TestCase):
+    def runtime_files(self, bundle):
+        return sorted(p.relative_to(bundle).as_posix() for p in bundle.rglob('*')
+                      if p.is_file() and p.name != 'SKILL.md' and '__pycache__' not in p.parts and p.suffix != '.pyc')
+
+    def test_native_support_dirs_and_suffixes(self):
+        for bundle in (A, B):
+            for rel in self.runtime_files(bundle):
+                self.assertIn(rel.split('/')[0], ('references', 'templates', 'scripts', 'assets'), rel)
+                self.assertIn(Path(rel).suffix, ('.md', '.json', '.py'), rel)
+
+    def test_every_runtime_file_linked_exactly_from_root(self):
+        for bundle in (A, B):
+            body = (bundle / 'SKILL.md').read_text()
+            linked = sorted(re.findall(r'\]\(([^)]+)\)', body))
+            self.assertEqual(linked, self.runtime_files(bundle))
+
+    def test_frontmatter_contract(self):
+        descriptions = []
+        for bundle in (A, B):
+            head = (bundle / 'SKILL.md').read_text().split('---')[1]
+            fields = dict(line.split(': ', 1) for line in head.splitlines() if ': ' in line and not line.startswith(' '))
+            desc = fields['description']
+            descriptions.append(desc)
+            self.assertLessEqual(len(desc), 60)
+            self.assertTrue(desc.endswith('.') and desc.count('.') == 1)
+            self.assertEqual(fields['license'], 'MIT')
+            self.assertIn('Lauren Tan', fields['author'])
+        self.assertNotEqual(*descriptions)
+
+    def test_no_bytecode_and_no_assert_gates(self):
+        import ast
+        for bundle in (A, B):
+            self.assertEqual([p for p in bundle.rglob('*') if p.suffix == '.pyc' or '__pycache__' in p.parts], [])
+            for path in bundle.rglob('*.py'):
+                self.assertFalse([n for n in ast.walk(ast.parse(path.read_text())) if isinstance(n, ast.Assert)], str(path))

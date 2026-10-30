@@ -11,3 +11,10 @@ Evidence: schema_version int 1, entries list. 각 entry: feature_id, source_cove
 cleanup: started_pids와 cleaned_pids는 중복 없는 양의 int list이며 동일 집합이어야 한다. bool은 int가 아니다. evidence_preserved bool true 필수. findings list는 미해결 제품 버그를 포함하며 비어 있지 않으면 실패한다.
 
 모든 파일 경로는 root 내부이며 절대경로, 부모 탈출, symlink를 거부한다. 임의 command 필드는 실행하지 않는다. CLI exit 0=모든 필수 구조 기준 PASS, 1=missing/empty/stale evidence, coverage/cleanup/타입/안전 gate 실패, 2=사용 오류·입출력·JSON 파싱 오류. 구조 검사는 실제 사용자 실행, doctor의 진실성, 독립 리뷰 또는 의미적 정확성을 증명하지 못한다.
+
+
+# 합성 CLI 예제
+
+운영제품 검증이 아니다. app.py의 deposit 2를 실제 실행한 출력이 drive.md다. source는 app.py 분기와 연결된다. 단명 CLI이므로 소유 중인 잔존 PID가 없다.
+
+실행 명령은 templates/verification-skill.template.md의 코드 블록에 있다. 예제는 복사본에서 실행한다. create와 maintain은 모두 exit 0이다. 같은 블록의 파생 negative는 복사본의 evidence.json을 sed로 바꿔 만든다: sha256을 0으로 바꾼 stale, live_coverage를 unreachable로 바꾼 경우이며 둘 다 exit 1이다. 더 많은 negative(missing, uncovered, unreachable attempted_status 등)는 프로젝트 저장소 테스트에서 evidence.json을 파생해 재현한다. 템플릿은 완료 증거가 아니다.

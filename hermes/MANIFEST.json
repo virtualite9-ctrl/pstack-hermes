@@ -6,27 +6,23 @@
       "files": [
         {
           "path": "SKILL.md",
-          "sha256": "fd4f5d73151a9e00a3d3088b2db6201df8c72f5ddb0aef7e2f7f49a203f34919"
+          "sha256": "130f1400cee8fb6b278079e46e016662872020d00782cd971cd1bf08fb3a7986"
         },
         {
-          "path": "examples/README.md",
-          "sha256": "4aafcbcc795129786e74af4e4b4ddbc8bc66311525f80ecc0d586e817ba4de09"
-        },
-        {
-          "path": "examples/bounded_ledger/implementation/ledger.py",
+          "path": "assets/examples/bounded_ledger/implementation/ledger.py",
           "sha256": "c6f0f1cbf944ef592eaaa9ecdbf13ac2c8e33e2cd650dbd37929edd31ad9fb58"
         },
         {
-          "path": "examples/bounded_ledger/receipt.json",
+          "path": "assets/examples/bounded_ledger/receipt.json",
           "sha256": "b10c49b48987caf87e9748daa0faf606e4979483958bcb62504ae422e8cddfdf"
         },
         {
-          "path": "examples/bounded_ledger/result.json",
+          "path": "assets/examples/bounded_ledger/result.json",
           "sha256": "14354e0256087107f6126663d00d4c76e6953f7fc07d2c3ec66956f11dd6075e"
         },
         {
-          "path": "examples/bounded_ledger/run_checks.py",
-          "sha256": "045f097a4bab75c2f4d0e61d27b47217da8ef3eb561679a0ccbc975b1a323587"
+          "path": "assets/examples/bounded_ledger/run_checks.py",
+          "sha256": "04e336661c6e02a4b77ef998290fd2d0cbe8112ad84e1e7af529648cf3aa40b2"
         },
         {
           "path": "references/upstream-license.md",
@@ -34,7 +30,7 @@
         },
         {
           "path": "references/workflow.md",
-          "sha256": "47274b33de1a698d93c4768366a6a60d4c10d221b75c17ef19a16ad08926e09d"
+          "sha256": "9e45201e9b4b2053617224bb7266c7be6680f50dd583fef1c52659152f65e800"
         },
         {
           "path": "scripts/formal_verification.py",
@@ -46,51 +42,31 @@
         },
         {
           "path": "templates/verification-skill.template.md",
-          "sha256": "14c18dc6892e04833c4d2611284481dfb38c284bae5a37f1e659ef114ab8ce38"
+          "sha256": "57e9d07aff9fcfebcb614f72dbf7abb3f9f7511c2dbefa049515dcffa6f512af"
         }
       ],
-      "sha256": "0c95df8154464946cc9fa4e9fb567ee91f7d0a78cd28e24aa2390bf43a0c0a76"
+      "sha256": "4557ab1b7728a8e2a4c26bc2a7e0632d2dde04f0325c4ebb0ce6727a2b47710c"
     },
     "pstack-project-verification": {
       "files": [
         {
           "path": "SKILL.md",
-          "sha256": "5be1541b9200c1f6b1f40504ac79c926dc7eb473f13b01a17a96d2678f8e45c4"
+          "sha256": "0dacbc9350749e2c6af5a09c4b341769a28094869819f863085fe416a09d1cde"
         },
         {
-          "path": "examples/README.md",
-          "sha256": "249d1cd77c6cfb849e8206d4531808b6cb2e67a5955532e890b70782c8046358"
-        },
-        {
-          "path": "examples/app.py",
+          "path": "assets/examples/app.py",
           "sha256": "0d0d03faeb57028971b6f36982a5b18037b699b194f495f0aff041c51380b97b"
         },
         {
-          "path": "examples/drive.txt",
+          "path": "assets/examples/drive.md",
           "sha256": "1343c3de91dca187c0a6241813a313d5928480418de172ace6405c99a75a3793"
         },
         {
-          "path": "examples/evidence.json",
-          "sha256": "405385e410dccdd38104ae674b77c4700bab0f39ba6fb6f99a31e5064ec0197e"
+          "path": "assets/examples/evidence.json",
+          "sha256": "1d6aab9df56b6638c8e0151e8f7469c094dead6ffcbe793e02fcdecb0b678599"
         },
         {
-          "path": "examples/fail-missing.json",
-          "sha256": "d6bceb2cde2216e3fc84815f5f066215c798e15ae647916deae8c6a3926bd112"
-        },
-        {
-          "path": "examples/fail-stale.json",
-          "sha256": "484ae21cb5a453317733475de7ba9f9f62e46162916dd51df0bc709c85532d96"
-        },
-        {
-          "path": "examples/fail-uncovered.json",
-          "sha256": "e630ed1f8bdba69f0b3af6e6d3f3fab16efa2528f6798a8a27bb028d5634d134"
-        },
-        {
-          "path": "examples/fail-unreachable.json",
-          "sha256": "d1677170bd2785ef445902da92b18c1d7df40c66831b0f2bc6950084cad6466a"
-        },
-        {
-          "path": "examples/feature-map.json",
+          "path": "assets/examples/feature-map.json",
           "sha256": "f35248b48172b2adc65934decad4a6782cbcdfd04217d72031e790042fb0e781"
         },
         {
@@ -99,26 +75,18 @@
         },
         {
           "path": "references/workflow.md",
-          "sha256": "7ee705f82f2af59a03e015ac3027e4443c307219826d871f0d82bcaae7156868"
+          "sha256": "73d27e19b4566f4405f1897ada6000c5dd9e9d05980468bb6688c00b91e15364"
         },
         {
           "path": "scripts/project_verification.py",
           "sha256": "d12167a96754d186e7acd54f8ba46d60eb9a6d5e7358d858b2fc932307ecabbe"
         },
         {
-          "path": "templates/evidence.template.json",
-          "sha256": "50ef5bfa700bb7e3767a6eb274e24ff2c3e9c797722d51cb66518b93b71ab515"
-        },
-        {
-          "path": "templates/feature-map.template.json",
-          "sha256": "46c00f10b039935f6dec35fa1f09cdae76040b476bd93018b665b78d7bee040a"
-        },
-        {
           "path": "templates/verification-skill.template.md",
-          "sha256": "5316f51f768d7a6619001614fe42d8140b114dd483e3238f35863f0030293e90"
+          "sha256": "b56fd775af2dcffacc2344a29929e8c649041bd1a6c8566174f8235d6934e3f4"
         }
       ],
-      "sha256": "7e3e62ff4a1bff810bb347fef15b683f2fa96fb2bd01d830cc5b7bb2be34ee7b"
+      "sha256": "4c06a19c3ce0f21479851ab0e5850e9ec677d1fbb0ce2708880bf0ebc3ef9e6b"
     }
   }
 }

@@ -47,7 +47,7 @@ class Negative(Fixture):
         for unsafe in ('../outside', '/etc/passwd', 'link'):
             with self.subTest(path=unsafe):
                 for root in (self.aroot, self.broot):
-                    if unsafe == 'link': (root / 'link').symlink_to(root / ('drive.txt' if root == self.aroot else 'result.json'))
+                    if unsafe == 'link': (root / 'link').symlink_to(root / ('drive.md' if root == self.aroot else 'result.json'))
                 self.ev['entries'][0]['artifacts'][0]['path'] = unsafe
                 self.receipt['result']['path'] = unsafe
                 with self.assertRaises(PA.GateError): self.project()
@@ -136,3 +136,25 @@ class Negative(Fixture):
         command = [sys.executable, str(B / 'scripts/formal_verification.py'), 'check', '--mode', 'create', '--receipt', str(path), '--root', str(self.broot)]
         self.assertEqual(subprocess.run(command, capture_output=True).returncode, 2)
         self.assertEqual(subprocess.run(command[:2], capture_output=True).returncode, 2)
+
+    def test_git_binding_negatives(self):
+        self.assertTrue(git_bound(self.broot, FORMAL_EXAMPLE, self.receipt))
+        for key in ('sync_commit', 'target_commit'):
+            bad = copy.deepcopy(self.receipt)
+            bad[key] = 'f' * 40
+            with self.subTest(unknown=key), self.assertRaises(ValueError): git_bound(self.broot, FORMAL_EXAMPLE, bad)
+        old = dict(self.receipt, sync_commit='1ba91fc25c0977741dd0e267849e6234b037ed0a', target_commit='1ba91fc25c0977741dd0e267849e6234b037ed0a')
+        with self.assertRaises(ValueError): git_bound(self.broot, FORMAL_EXAMPLE, old)  # original defect: path absent at that commit
+        with self.assertRaises(ValueError): git_bound(self.broot, FORMAL_EXAMPLE + '-wrong', self.receipt)
+        for name in ('implementation/ledger.py', 'run_checks.py'):
+            with self.subTest(mismatch=name):
+                path = self.broot / name
+                original = path.read_bytes()
+                path.write_bytes(original + b'\n# differs\n')
+                with self.assertRaises(ValueError): git_bound(self.broot, FORMAL_EXAMPLE, self.receipt)
+                path.write_bytes(original)
+
+    def test_structural_validator_does_not_check_git(self):
+        self.receipt['sync_commit'] = self.receipt['target_commit'] = 'f' * 40
+        self.formal()  # shape-only: nonexistent commit passes the validator
+        with self.assertRaises(ValueError): git_bound(self.broot, FORMAL_EXAMPLE, self.receipt)
