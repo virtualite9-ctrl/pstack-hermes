@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "features": [
+    {
+      "id": "deposit",
+      "user_path": "CLI deposit 2 \u2192 balance=2"
+    }
+  ]
+}

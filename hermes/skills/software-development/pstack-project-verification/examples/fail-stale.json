@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "entries": [
+    {
+      "feature_id": "deposit",
+      "source_coverage": "pass",
+      "live_coverage": "pass",
+      "doctor_before": true,
+      "real_user_path": true,
+      "artifacts": [
+        {
+          "path": "drive.txt",
+          "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    }
+  ],
+  "cleanup": {
+    "started_pids": [],
+    "cleaned_pids": [],
+    "evidence_preserved": true
+  },
+  "findings": []
+}

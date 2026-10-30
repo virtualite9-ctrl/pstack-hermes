@@ -1,0 +1,19 @@
+{
+  "baseline_pass": true,
+  "sequences": 341,
+  "bounds": {
+    "max_length": 4,
+    "capacity": 3,
+    "alphabet_size": 4
+  },
+  "target_sha256": "c6f0f1cbf944ef592eaaa9ecdbf13ac2c8e33e2cd650dbd37929edd31ad9fb58",
+  "mutation": {
+    "detected": true,
+    "counterexample": [
+      -2
+    ],
+    "restored": true,
+    "before_sha256": "c6f0f1cbf944ef592eaaa9ecdbf13ac2c8e33e2cd650dbd37929edd31ad9fb58",
+    "after_sha256": "c6f0f1cbf944ef592eaaa9ecdbf13ac2c8e33e2cd650dbd37929edd31ad9fb58"
+  }
+}
