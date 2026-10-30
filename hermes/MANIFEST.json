@@ -14,7 +14,7 @@
         },
         {
           "path": "assets/examples/bounded_ledger/receipt.json",
-          "sha256": "b10c49b48987caf87e9748daa0faf606e4979483958bcb62504ae422e8cddfdf"
+          "sha256": "867c916056e0e1fd325cc8cd1085ed21023c3bebd9a2b28ed7d7dc5259b40cc8"
         },
         {
           "path": "assets/examples/bounded_ledger/result.json",
@@ -45,7 +45,7 @@
           "sha256": "57e9d07aff9fcfebcb614f72dbf7abb3f9f7511c2dbefa049515dcffa6f512af"
         }
       ],
-      "sha256": "4557ab1b7728a8e2a4c26bc2a7e0632d2dde04f0325c4ebb0ce6727a2b47710c"
+      "sha256": "129328a94fca84166564173b6f713a512d83a317d92b8d323e9a675982e3a224"
     },
     "pstack-project-verification": {
       "files": [
