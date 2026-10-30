@@ -1,5 +1,12 @@
 # 프로젝트 절차 및 JSON 계약
 
+## 생성→산출→증명→유지 인계
+
+1. 생성: 에이전트가 실제 repository와 source locator·SHA256 digest·revision을 조사하고 템플릿을 대상에 맞게 완성한다. 목표는 다음 에이전트가 처음 읽고 재실행하는 것이다. 사용자 승인된 고정 명령은 에이전트가 직접 실행한다. manifest 안 임의 command 실행은 금지한다. 승인되지 않은 설치·운영 변경은 blocked로 인계한다.
+2. 산출: repo/.hermes/verification-skills/verify-&lt;slug&gt;/SKILL.md (slug는 실제 프로젝트 이름으로 치환)에 작성한다. 이는 project-owned 명시 로딩 산출물이며 자동 발견·등록되지 않는다. 등록은 별도 승인 후 의도한 profile의 skill_manage로만 한다. 유효한 frontmatter와 한국어 H1, 아래 필수 섹션을 채우고 미해결 꺾쇠 슬롯·미완료 표시·이중 중괄호 슬롯을 제거한다. 템플릿 자체와 완료 산출물을 혼동하지 않는다.
+3. 증명: Launch에는 조사한 build·launch·readiness 명령을 기록한다. 단명 CLI면 build 및 각 실행을 기록하고 장기 프로세스가 없음을 명시한다. Doctor는 읽기 전용(read-only)이며 첫 실행·새 세션·이상 후 수행한다. Drive per feature에는 feature별 사용자 경로·실행 명령·관찰 end state·기대값과 실제값을 기록한다. Evidence에는 action/result evidence 생성 명령, stdout/stderr·exit·경로·hash를 기록한다. stdout-only 앱이면 명시하고 실제 stdout을 파일로 보존·hash한다. 예: 승인한 앱 명령의 stdout을 drive.stdout에 리다이렉트한 후 python3 -c 'import hashlib,pathlib; p=pathlib.Path("drive.stdout"); print(hashlib.sha256(p.read_bytes()).hexdigest())'로 hash를 기록한다. 검사기 PASS만으로 live 실행을 대신하지 않는다.
+4. 유지 인계: Cleanup은 자신이 만든 자원만 대상으로 PID·파일 목록과 정리 명령을 기록한다. evidence를 정리 대상 밖에 두고 cleanup 후 evidence 생존·hash를 실제 재확인한다. Coverage는 source/live coverage를 분리하고 blocked/unreachable을 PASS로 세지 않는다. 다음 에이전트는 생성 SKILL을 명시 로딩하고 Doctor부터 모든 feature를 재실행하며 신규 surface·변경된 source를 조사한다. 실패 증거를 유지하고 제품 코드·기대값을 약화하지 않는다.
+
 create: 저장소에서 surface/run/drive/observe/isolate를 조사한다. 기존 문서·harness를 우선한다. launch는 격리된 데이터와 readiness까지 도달해야 한다. doctor는 버전·소유 포트·인증·건강을 읽기 전용으로 확인한다. 실제 사용자 경로 한 개 이상을 drive하고 action/result/side effect 증거를 남긴 뒤 cleanup한다. stand-in과 실제 환경 차이는 미검증으로 보고한다.
 
 maintain: index와 feature map 전체를 읽고 source entry point를 확인한다. 누락된 새 사용자 surface를 찾는다. source coverage와 live coverage를 분리한다. 모든 mapped feature를 실제로 drive한다. 첫 drive 및 새 세션마다 doctor, 실패/이상 동작 후 doctor 재확인 및 필요 시 알려진 상태로 reset/relaunch한다. unreachable은 시도 경로와 구체적 prerequisite을 기록하고 PASS로 세지 않는다. harness 수정 후 반드시 live 재검증한다. 제품 버그는 finding으로 보존하며 기대값을 고쳐 숨기지 않는다.

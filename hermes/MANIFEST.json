@@ -30,7 +30,7 @@
         },
         {
           "path": "references/workflow.md",
-          "sha256": "9e45201e9b4b2053617224bb7266c7be6680f50dd583fef1c52659152f65e800"
+          "sha256": "8f2cfbaa1869692bcc7f5b980de74cd14413efeb55b48c6a0df74a8daa7faf4d"
         },
         {
           "path": "scripts/formal_verification.py",
@@ -42,10 +42,10 @@
         },
         {
           "path": "templates/verification-skill.template.md",
-          "sha256": "57e9d07aff9fcfebcb614f72dbf7abb3f9f7511c2dbefa049515dcffa6f512af"
+          "sha256": "6d6f2eb515c8e9e6138f32ac46639dcc41967671c39f84889156f2dce877a742"
         }
       ],
-      "sha256": "129328a94fca84166564173b6f713a512d83a317d92b8d323e9a675982e3a224"
+      "sha256": "59b2e0b3bcfb2bac9f61a051b4ea1f6548efc9ba0c59c3c7512c45aa6d467f7d"
     },
     "pstack-project-verification": {
       "files": [
@@ -75,7 +75,7 @@
         },
         {
           "path": "references/workflow.md",
-          "sha256": "73d27e19b4566f4405f1897ada6000c5dd9e9d05980468bb6688c00b91e15364"
+          "sha256": "e04180bd790d9dab6676e1d5cbd6a417ec7338d633d668dce5f2cfc604f8bea8"
         },
         {
           "path": "scripts/project_verification.py",
@@ -83,10 +83,10 @@
         },
         {
           "path": "templates/verification-skill.template.md",
-          "sha256": "b56fd775af2dcffacc2344a29929e8c649041bd1a6c8566174f8235d6934e3f4"
+          "sha256": "bde7055dede6bfa707818b05af53f489da62c3e2f4b8254f4e8c4dd705d1d2c4"
         }
       ],
-      "sha256": "4c06a19c3ce0f21479851ab0e5850e9ec677d1fbb0ce2708880bf0ebc3ef9e6b"
+      "sha256": "4eb786161d19ee2caf7782d1adee69c0fe73369982c626e5b7a863a89607c83c"
     }
   }
 }
